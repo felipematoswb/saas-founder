@@ -78,26 +78,25 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
 
 DJANGO_CONN_MAX_AGE = config('DJANGO_CONN_MAX_AGE', default=30, cast=int)
 DJANGO_DATABASE_URL = config('DJANGO_DATABASE_URL', default=None, cast=str)
 
-if DJANGO_DATABASE_URL is not None:
+if DJANGO_DATABASE_URL:
+
     import dj_database_url
     DATABASES = {
         'default': dj_database_url.config(default=DJANGO_DATABASE_URL, conn_health_checks=True, conn_max_age=30)
     }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
 
-
-# Password validation
-# https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
+    # Password validation
+    # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -131,6 +130,14 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
+
+STAICFILES_BASE_DIR = BASE_DIR / 'staticfiles'
+
+STATICFILES_VENDOR_DIR = STAICFILES_BASE_DIR / 'vendors'
+
+STATICFILES_DIRS = [STAICFILES_BASE_DIR]
+
+STATIC_ROOT = BASE_DIR.parent / 'local-cdn'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

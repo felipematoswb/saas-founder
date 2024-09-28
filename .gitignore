@@ -9,6 +9,9 @@ media
 # Backup files # 
 *.bak 
 
+#staticfiles vendor ignore
+src/staticfiles
+local-cdn
 # If you are using PyCharm # 
 # User-specific stuff
 .idea/**/workspace.xml
