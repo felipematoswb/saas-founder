@@ -31,7 +31,6 @@ ALLOWED_HOSTS = ['.railway.app']
 if DEBUG:
     ALLOWED_HOSTS += ['127.0.0.1', 'localhost']
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -47,6 +46,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -141,6 +141,12 @@ STATICFILES_VENDOR_DIR = STATICFILES_BASE_DIR / 'vendors'
 STATICFILES_DIRS = [STATICFILES_BASE_DIR]
 
 STATIC_ROOT = BASE_DIR.parent / 'local-cdn'
+
+STORAGES = {
+    'staticfiles': {
+        'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+    }
+}
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
