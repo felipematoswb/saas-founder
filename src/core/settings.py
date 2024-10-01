@@ -10,12 +10,23 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+import logging
 from pathlib import Path
 from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = config('EMAIL_HOST', default='smtp.gmail.com', cast=str)
+EMAIL_PORT = config('EMAIL_PORT', default='587', cast=str)
+EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
+EMAIL_USE_SSL = config('EMAIL_USE_SSL', default=False, cast=bool)
+EMAIL_HOST_USER = config('EMAIL_HOST_USER', default=None, cast=str)
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default=None, cast=str)
+
+ADMINS = [('Felipe', 'felipematoswb@gmail.com')]
+MANAGERS = ADMINS
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -42,6 +53,14 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'visits.apps.VisitsConfig',
     'commando.apps.CommandoConfig',
+    # third party apps
+    "allauth_ui",
+    "widget_tweaks",
+    'slippers',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.github',
 ]
 
 MIDDLEWARE = [
@@ -53,6 +72,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "allauth.account.middleware.AccountMiddleware",
+
 ]
 
 ROOT_URLCONF = 'core.urls'
@@ -91,13 +112,40 @@ DJANGO_DATABASE_URL = config('DJANGO_DATABASE_URL', default=None, cast=str)
 
 if DJANGO_DATABASE_URL:
 
-    import dj_database_url
-    DATABASES = {
-        'default': dj_database_url.config(default=DJANGO_DATABASE_URL, conn_health_checks=True, conn_max_age=30)
-    }
+    try:
+        import dj_database_url
+        DATABASES = {
+            'default': dj_database_url.config(default=DJANGO_DATABASE_URL, conn_health_checks=True, conn_max_age=30)
+        }
+    except ImportError as e:
+        logging.error(
+            "dj_database_url could not be imported. Default database configuration will not be set.")
+    except Exception as e:
+        logging.error(f"An error occurred while configuring the database: {e}")
 
-    # Password validation
-    # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
+
+# Django AllAuth Config
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_EMAIL_SUBJECT_PREFIX = "WholeSales - "
+LOGIN_REDIRECT_URL = '/'
+
+AUTHENTICATION_BACKENDS = [
+    # ...
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by email
+    'allauth.account.auth_backends.AuthenticationBackend',
+    # ...
+]
+
+# Provider specific settings
+SOCIALACCOUNT_PROVIDERS = {}
+
+# Password validation
+# https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -152,3 +200,6 @@ STORAGES = {
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+SILENCED_SYSTEM_CHECKS = ["slippers.E001"]
