@@ -32,6 +32,9 @@ MANAGERS = ADMINS
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
+if config('DJANGO_SECRET_KEY', cast=str):
+    print('nice to have!')
+
 SECRET_KEY = config('DJANGO_SECRET_KEY', cast=str)
 
 # SECURITY WARNING: don't run with debug turned on in production!
