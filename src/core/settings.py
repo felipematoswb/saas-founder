@@ -55,12 +55,12 @@ INSTALLED_APPS = [
     'commando.apps.CommandoConfig',
     # third party apps
     "allauth_ui",
-    "widget_tweaks",
-    'slippers',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.github',
+    "widget_tweaks",
+    'slippers',
 ]
 
 MIDDLEWARE = [
@@ -125,6 +125,7 @@ if DJANGO_DATABASE_URL:
 
 
 # Django AllAuth Config
+ALLAUTH_UI_THEME = "dim"
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
@@ -142,7 +143,14 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 # Provider specific settings
-SOCIALACCOUNT_PROVIDERS = {}
+SOCIALACCOUNT_PROVIDERS = {
+    "github": {
+        # For each provider, you can choose whether or not the
+        # email address(es) retrieved from the provider are to be
+        # interpreted as verified.
+        "VERIFIED_EMAIL": True
+    },
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
